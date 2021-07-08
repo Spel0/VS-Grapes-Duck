@@ -842,6 +842,11 @@ class PlayState extends MusicBeatState
 		// REPOSITIONING PER STAGE
 		switch (curStage)
 		{
+			case 'stage':
+				if (dad.curCharacter == "bf-pixel"){
+					dad.y = boyfriend.y + 150;
+					dad.x = boyfriend.x - 450;
+				}
 			case 'limo':
 				boyfriend.y -= 220;
 				boyfriend.x += 260;
@@ -1659,7 +1664,7 @@ class PlayState extends MusicBeatState
 			switch (noteTypeCheck)
 			{
 				case 'pixel':
-					babyArrow.loadGraphic(Paths.image('weeb/pixelUI/arrows-pixels'), true, 17, 17);
+					babyArrow.loadGraphic(Paths.image('pixelUI/arrows-pixels', 'shared'), true, 17, 17);
 					babyArrow.animation.add('green', [6]);
 					babyArrow.animation.add('red', [7]);
 					babyArrow.animation.add('blue', [5]);
