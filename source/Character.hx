@@ -231,6 +231,10 @@ class Character extends FlxSprite
 						else
 							playAnim('danceLeft');
 					}
+				case 'bf':
+					playAnim('idle');
+				case 'bf-pixel':
+					playAnim('idle');
 			}
 		}
 	}
