@@ -42,9 +42,7 @@ class MainMenuState extends MusicBeatState
 
 	public static var kadeEngineVer:String = "1.5.4" + nightly;
 	public static var gameVer:String = "0.2.7.1";
-
-	var altBg:Bool = FlxG.random.bool(10);
-	public static var bgSuffix:String;
+	public static var bgSuffix:String = '';
 
 	var magenta:FlxSprite;
 	var camFollow:FlxObject;
@@ -56,9 +54,6 @@ class MainMenuState extends MusicBeatState
 		// Updating Discord Rich Presence
 		DiscordClient.changePresence("In the Menus", null);
 		#end
-		#if debug
-		altBg = FlxG.random.bool(90);
-		#end
 
 		if (!FlxG.sound.music.playing)
 		{
@@ -67,10 +62,14 @@ class MainMenuState extends MusicBeatState
 
 		persistentUpdate = persistentDraw = true;
 
-		if (altBg) {
+		#if !debug
+		MainMenuVars.altBG = FlxG.random.bool(50);
+		#end
+
+		if (MainMenuVars.altBG)
 			bgSuffix = "Alt";
-			trace("altBG");
-		}
+		else
+			bgSuffix = '';
 
 		var bg:FlxSprite = new FlxSprite(-100).loadGraphic(Paths.image('menuBG' + bgSuffix));
 		bg.scrollFactor.x = 0;
@@ -156,6 +155,17 @@ class MainMenuState extends MusicBeatState
 
 		if (!selectedSomethin)
 		{
+			#if debug
+			if (FlxG.keys.justPressed.ONE && MainMenuVars.altBG) {
+				MainMenuVars.altBG = false;
+				FlxG.switchState(new MainMenuState());
+			}
+			else if (FlxG.keys.justPressed.TWO && !MainMenuVars.altBG) {
+				MainMenuVars.altBG = true;
+				FlxG.switchState(new MainMenuState());
+			}
+			#end
+
 			var gamepad:FlxGamepad = FlxG.gamepads.lastActive;
 
 			if (gamepad != null)
