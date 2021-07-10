@@ -43,6 +43,9 @@ class MainMenuState extends MusicBeatState
 	public static var kadeEngineVer:String = "1.5.4" + nightly;
 	public static var gameVer:String = "0.2.7.1";
 
+	var altBg:Bool = FlxG.random.bool(10);
+	public static var bgSuffix:String;
+
 	var magenta:FlxSprite;
 	var camFollow:FlxObject;
 	public static var finishedFunnyMove:Bool = false;
@@ -53,6 +56,9 @@ class MainMenuState extends MusicBeatState
 		// Updating Discord Rich Presence
 		DiscordClient.changePresence("In the Menus", null);
 		#end
+		#if debug
+		altBg = FlxG.random.bool(90);
+		#end
 
 		if (!FlxG.sound.music.playing)
 		{
@@ -61,7 +67,12 @@ class MainMenuState extends MusicBeatState
 
 		persistentUpdate = persistentDraw = true;
 
-		var bg:FlxSprite = new FlxSprite(-100).loadGraphic(Paths.image('menuBG'));
+		if (altBg) {
+			bgSuffix = "Alt";
+			trace("altBG");
+		}
+
+		var bg:FlxSprite = new FlxSprite(-100).loadGraphic(Paths.image('menuBG' + bgSuffix));
 		bg.scrollFactor.x = 0;
 		bg.scrollFactor.y = 0.10;
 		bg.setGraphicSize(Std.int(bg.width * 1.1));
@@ -73,7 +84,7 @@ class MainMenuState extends MusicBeatState
 		camFollow = new FlxObject(0, 0, 1, 1);
 		add(camFollow);
 
-		magenta = new FlxSprite(-80).loadGraphic(Paths.image('menuDesat'));
+		magenta = new FlxSprite(-80).loadGraphic(Paths.image('menuDesat' + bgSuffix));
 		magenta.scrollFactor.x = 0;
 		magenta.scrollFactor.y = 0.10;
 		magenta.setGraphicSize(Std.int(magenta.width * 1.1));
