@@ -235,6 +235,8 @@ class Character extends FlxSprite
 					playAnim('idle');
 				case 'bf-pixel':
 					playAnim('idle');
+				default:
+					playAnim('idle');
 			}
 		}
 	}
