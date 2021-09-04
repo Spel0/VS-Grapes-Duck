@@ -2,7 +2,7 @@ package;
 
 import flixel.input.gamepad.FlxGamepad;
 import openfl.Lib;
-#if windows
+#if desktop
 import llua.Lua;
 #end
 import Controls.Control;
@@ -130,8 +130,14 @@ class PauseSubState extends MusicBeatSubstate
 		switch (songLowercase) {
 			case 'dad-battle': songLowercase = 'dadbattle';
 			case 'philly-nice': songLowercase = 'philly';
+			case 'm.i.l.f': songLowercase = 'milf';
 		}
 		var songPath = 'assets/data/' + songLowercase + '/';
+
+		#if sys
+		if (PlayState.isSM && !PlayState.isStoryMode)
+			songPath = PlayState.pathToSm;
+		#end
 
 		if (controls.UP_P || upPcontroller)
 		{
@@ -200,23 +206,28 @@ class PauseSubState extends MusicBeatSubstate
 			}
 		#end
 
-		if (controls.ACCEPT)
+		if (controls.ACCEPT && !FlxG.keys.pressed.ALT)
 		{
 			var daSelected:String = menuItems[curSelected];
 
+			
 			switch (daSelected)
 			{
 				case "Resume":
 					close();
 				case "Restart Song":
+					PlayState.startTime = 0;
 					if (PlayState.instance.useVideo)
 					{
 						GlobalVideo.get().stop();
 						PlayState.instance.remove(PlayState.instance.videoSprite);
 						PlayState.instance.removedVideo = true;
 					}
+					PlayState.instance.clean();
 					FlxG.resetState();
+					PlayState.stageTesting = false;
 				case "Exit to menu":
+					PlayState.startTime = 0;
 					if (PlayState.instance.useVideo)
 					{
 						GlobalVideo.get().stop();
@@ -230,7 +241,8 @@ class PauseSubState extends MusicBeatSubstate
 						FlxG.save.data.downscroll = false;
 					}
 					PlayState.loadRep = false;
-					#if windows
+					PlayState.stageTesting = false;
+					#if desktop
 					if (PlayState.luaModchart != null)
 					{
 						PlayState.luaModchart.die();
@@ -240,7 +252,12 @@ class PauseSubState extends MusicBeatSubstate
 					if (FlxG.save.data.fpsCap > 290)
 						(cast (Lib.current.getChildAt(0), Main)).setFPSCap(290);
 					
-					FlxG.switchState(new MainMenuState());
+					PlayState.instance.clean();
+
+					if (PlayState.isStoryMode)
+						FlxG.switchState(new StoryMenuState());
+					else
+						FlxG.switchState(new FreeplayState());
 			}
 		}
 
@@ -261,6 +278,8 @@ class PauseSubState extends MusicBeatSubstate
 	function changeSelection(change:Int = 0):Void
 	{
 		curSelected += change;
+		
+		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 
 		if (curSelected < 0)
 			curSelected = menuItems.length - 1;
